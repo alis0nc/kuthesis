@@ -1,0 +1,23 @@
+%%
+%% This file generates files required to use the kuthesis style.
+%% At your command prompt type
+%%
+%%     tex kuthesis.ins
+%%
+\def\batchfile{kuthesis.ins}
+\input docstrip
+\preamble
+\endpreamble
+
+\generate{
+    \file{kuthesis.cls}{\from{kuthesis.dtx}{main}}
+}
+
+\Msg{*}
+\Msg{* You probably need to move all created `.sty' and `.cfg'}
+\Msg{* files into a directory searched by TeX.}
+\Msg{*}
+\Msg{* Run `kuthesis.dtx' through LaTeX2e to get the documentation.}
+\Msg{*}
+
+\endbatchfile

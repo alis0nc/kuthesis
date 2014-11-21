@@ -1,0 +1,1291 @@
+% \iffalse
+%<*driver>
+%<*gobble>
+\ifx\jobname\relax\let\documentclass\undefined\fi
+\ifx\documentclass\undefined\else \csname fi \endcsname
+%</gobble>
+\documentclass{ltxdoc}
+	\EnableCrossrefs
+\RecordChanges
+\typeout{Expect some Under- and overfull boxes}
+\begin{document}
+\DocInput{kuthesis.dtx}
+\end{document}
+%<*gobble>
+\fi
+%</gobble>
+%</driver>
+%
+%<*main>
+% \fi
+%
+% \def\fileversion{v0.4} \def\filedate{2000/05/29}
+%
+% \title{{kuthesis.dtx}\thanks{This file has version \fileversion\ last revised \filedate}}
+% \author{Arthur Shipkowski}
+% \maketitle
+%
+%	\begin{abstract}
+%	Kuthesis.dtx is a style file for the Kettering University Thesis Format for \LaTeX.
+%	It is designed to cover most needs that Kettering thesis students have.
+%	\end{abstract}
+%
+% \section*{Preface}
+%
+% \paragraph{Usage of other styles.}
+%	You will find traces of other style files sucked in wholesale by
+% this file.  This is not to offend the original owners of those files; I
+% figure that a student adventurous enough to try this file out ought to
+% have all the help they can get.  The most flagrant use of this is in the endnote
+% section.  Due to the multitude of available files for to do it, I have not
+% added APA-style citing.
+%
+% \paragraph{Special note.}
+%  This style does not attempt to provide
+% APA-style citing. There are a number of packages out there,
+% of which the most comprehensive is apacite (which has both
+% a \LaTeX\ style and a \BibTeX\ style).  However, you'll have to
+% |\renewcommand| the keyword |\bibname|, because they define it to
+% have lowercase and use addcontentsline to get around any
+% provisions I may make.
+%
+% \paragraph{Thanks.}
+% 	There are three people I wish to thank for help on creating this file.  
+% First, Professor Mark Wicks of Kettering University, who answered a good number of my
+% headscratchers.  Second, Professor James McDonald of Kettering University,
+% who encouraged me to use \LaTeX to create my thesis.  Finally, My fiance\'{e}, Stephanie
+% Rybicki, who was kind enough to give me the kick I needed to get this 
+% file documented.  It is still somewhat of a crawling horror, though.
+%
+% \section{Getting Started}
+%
+% \subsection{Requirements}
+%
+% This style file requires the \texttt{setspace}, \texttt{times},
+% \texttt{helvet}, \texttt{ifthen}, and \texttt{calc} packages.  With the
+% possible exception of \texttt{setspace}, all of these should be in your
+% \TeX\ distribution.
+%
+% \subsection{Installation}
+%
+% \begin{enumerate}
+% \item	Make sure the files are in your current working directory and run \texttt{kuthesis.ins} through \TeX.
+% \item Move the generated files to someplace you'd like them to be.  I'm sure there's an official spot.
+% \item If your \TeX\ implementation uses a filename database, update it.
+% \end{enumerate} 
+%
+% \subsection{Usage}
+%
+% The use of this file is actually fairly simple, as it acts almost
+% exactly like the report style.  Just add the following to your
+% file:\\
+% \\
+% |\documentclass[12pt]{kuthesis}      % Specifies the document class |
+% \\
+% \\
+% Of course, in order to completely make a file fit the Kettering Thesis
+% manual, there is more to do than that.  First off, in addition
+% to |\title{}| and |\author{}|, you are to define other things.
+% To start with, you must define your department with 
+% |\department{Computer Engineering}|.  Then, define your sponsor with
+% |\sponsor{MAXIMUM WIDGETS}|.  Finally, define your graduation
+% date with |\gdate{December 3, 1999}|.  This way, when you use
+% |\maketitle|, not only will your title page be generated but your
+% disclaimer page will be generated as well.
+%
+% Next, enclose your preface in the preface environment with |\begin{preface}|
+% and |\end{preface}|.  
+%
+% In order to produce the table of contents, list of illustrations, and list
+% of tables, you'll need to do the following.
+%
+%
+% \begin{verbatim}
+% \singlespacing
+% \tableofcontents\ 
+% \listofillustrations
+% \end{verbatim}
+%
+% Finally, when it is time to begin the body of your thesis,
+% use |\begincontent|.  Enter chapters as you would for a report.
+% Note that footnotes are not permitted; use |\endnote| with a |\theendnotes|
+% at the end of each chapter.
+%
+% Creating a glossary will require you to |\setcounter{secnumdepth}{-1}|
+% before the glossary and |\setcounter{secnumdepth}{0}| afterwards.  Declare
+% appendicies with |\appendix| before chapter names, but note that a 
+% single appendix will have to be done by hand.
+%
+% \subsection{Using \texttt{apacite} with \texttt{kuthesis.cls}}
+%
+% Just use the following code, and do citations as normal.  Naturally,
+% don't forget to use the apacite package in your preamble.
+%
+% \begin{verbatim}
+% \begin{singlespace}
+% \bibliographystyle{apacite}
+% \bibliography{thesis}
+% \end{singlespace}
+% \end{verbatim}
+%
+% \section{Source Code Examination and Discussion}
+%
+% This source code is based heavily on the report style source code.  Therefore,
+% I will focus more on commenting on changes and interesting properties.
+%
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\ProvidesClass{kuthesis}[2000/05/29 Kettering University Thesis class definition]
+%    \end{macrocode}
+%
+% We must double space almost everything and put it in 12 pt Times New Roman.
+% In certain cases, Helvetica may be needed.  Since we will still occasionally
+% need to single space things, we simply use the \texttt{setspace} package.
+%
+%    \begin{macrocode}
+\RequirePackage{setspace}
+\RequirePackage{times}
+\RequirePackage{helvet}
+\RequirePackage{ifthen}
+\RequirePackage{calc}
+%    \end{macrocode}
+% There are spots in this file where options remain that aren't useful.
+% Paper sizes are one of these things.  One of these days perhaps someone
+% will rip it out, but I'm not too willing to risk yet another style change.
+%    \begin{macrocode}
+\newcommand\@ptsize{}
+\newif\if@restonecol
+\newif\if@titlepage
+\@titlepagetrue
+\newif\if@openright
+\if@compatibility\else
+\DeclareOption{a4paper}
+   {\setlength\paperheight {297mm}%
+    \setlength\paperwidth  {210mm}}
+\DeclareOption{a5paper}
+   {\setlength\paperheight {210mm}%
+    \setlength\paperwidth  {148mm}}
+\DeclareOption{b5paper}
+   {\setlength\paperheight {250mm}%
+    \setlength\paperwidth  {176mm}}
+\DeclareOption{letterpaper}
+   {\setlength\paperheight {11in}%
+    \setlength\paperwidth  {8.5in}}
+\DeclareOption{legalpaper}
+   {\setlength\paperheight {14in}%
+    \setlength\paperwidth  {8.5in}}
+\DeclareOption{executivepaper}
+   {\setlength\paperheight {10.5in}%
+    \setlength\paperwidth  {7.25in}}
+\DeclareOption{landscape}
+   {\setlength\@tempdima   {\paperheight}%
+    \setlength\paperheight {\paperwidth}%
+    \setlength\paperwidth  {\@tempdima}}
+\fi
+\if@compatibility
+  \renewcommand\@ptsize{0}
+\else
+\DeclareOption{10pt}{\renewcommand\@ptsize{0}}
+\fi
+\DeclareOption{11pt}{\renewcommand\@ptsize{1}}
+\DeclareOption{12pt}{\renewcommand\@ptsize{2}}
+\if@compatibility\else
+\DeclareOption{oneside}{\@twosidefalse \@mparswitchfalse}
+\fi
+\DeclareOption{twoside}{\@twosidetrue  \@mparswitchtrue}
+\DeclareOption{draft}{\setlength\overfullrule{5pt}}
+\if@compatibility\else
+\DeclareOption{final}{\setlength\overfullrule{0pt}}
+\fi
+\DeclareOption{titlepage}{\@titlepagetrue}
+\if@compatibility\else
+\DeclareOption{notitlepage}{\@titlepagefalse}
+\fi
+\if@compatibility
+\else
+\DeclareOption{openright}{\@openrighttrue}
+\DeclareOption{openany}{\@openrightfalse}
+\fi
+\if@compatibility\else
+\DeclareOption{onecolumn}{\@twocolumnfalse}
+\fi
+\DeclareOption{twocolumn}{\@twocolumntrue}
+\DeclareOption{leqno}{\input{leqno.clo}}
+\DeclareOption{fleqn}{\input{fleqn.clo}}
+\DeclareOption{openbib}{%
+  \AtEndOfPackage{%
+   \renewcommand\@openbib@code{%
+      \advance\leftmargin\bibindent
+      \itemindent -\bibindent
+      \listparindent \itemindent
+      \parsep \z@
+      }%
+   \renewcommand\newblock{\par}}%
+}
+%    \end{macrocode}
+% The following options are what you get if you do not specify any
+% options in the class definition. It is designed to produce a thesis
+% the way the department wants to see it.
+%    \begin{macrocode}
+\ExecuteOptions{letterpaper,12pt,oneside,onecolumn,final,openany}
+\ProcessOptions
+\input{size1\@ptsize.clo}
+%    \end{macrocode}
+% To produce output with the desired line spacing, the argument of
+% |\spacing| should be multiplied by $5/6 = 0.8333$, so that $1\frac{1}{2}$ spacing
+% corresponds to |\spacing{1.5}| and double spaced is |\spacing{1.66}|.
+%    \begin{macrocode}
+\def\normalspacing{1.25} % default line spacing
+\setlength\lineskip{1\p@}
+\setlength\normallineskip{1\p@}
+\renewcommand\baselinestretch{}
+\setlength\parskip{0\p@ \@plus \p@}
+\@lowpenalty   51
+\@medpenalty  151
+\@highpenalty 301
+\setcounter{topnumber}{2}
+\renewcommand\topfraction{.7}
+\setcounter{bottomnumber}{1}
+\renewcommand\bottomfraction{.3}
+\setcounter{totalnumber}{3}
+\renewcommand\textfraction{.2}
+\renewcommand\floatpagefraction{.5}
+\setcounter{dbltopnumber}{2}
+\renewcommand\dbltopfraction{.7}
+\renewcommand\dblfloatpagefraction{.5}
+\if@twoside
+  \def\ps@headings{%
+      \let\@oddfoot\@empty\let\@evenfoot\@empty
+      \def\@evenhead{\thepage\hfil\slshape\leftmark}%
+      \def\@oddhead{{\slshape\rightmark}\hfil\thepage}%
+      \let\@mkboth\markboth
+    \def\chaptermark##1{%
+      \markboth {\MakeUppercase{%
+        \ifnum \c@secnumdepth >\m@ne
+            \@chapapp\ \thechapter. \ %
+        \fi
+        ##1}}{}}%
+    \def\sectionmark##1{%
+      \markright {\MakeUppercase{%
+        \ifnum \c@secnumdepth >\z@
+          \thesection. \ %
+        \fi
+        ##1}}}}
+\else
+  \def\ps@headings{%
+    \let\@oddfoot\@empty
+    \def\@oddhead{{\slshape\rightmark}\hfil\thepage}%
+    \let\@mkboth\markboth
+    \def\chaptermark##1{%
+      \markright {\MakeUppercase{%
+        \ifnum \c@secnumdepth >\m@ne
+            \@chapapp\ \thechapter. \ %
+        \fi
+        ##1}}}}
+\fi
+\def\ps@myheadings{%
+    \let\@oddfoot\@empty\let\@evenfoot\@empty
+    \def\@evenhead{\thepage\hfil\slshape\leftmark}%
+    \def\@oddhead{{\slshape\rightmark}\hfil\thepage}%
+    \let\@mkboth\@gobbletwo
+    \let\chaptermark\@gobble
+    \let\sectionmark\@gobble
+    }
+%    \end{macrocode}
+% Items required for the title page.
+%    \begin{macrocode}
+\newcommand{\sponsor}[1]{\ifx\empty#1\else\gdef\@sponsor{#1}\fi}
+\newcommand{\department}[1]{\ifx\empty#1\else\gdef\@department{#1}\fi}
+\renewcommand{\author}[1]{\ifx\empty#1\else\gdef\@author{#1}\fi}
+\renewcommand{\title}[1]{\ifx\empty#1\else\gdef\@title{#1}\fi}
+\newcommand{\gdate}[1]{\ifx\empty#1\else\gdef\@gdate{#1}\fi}
+
+\global\def\@sponsor{\mbox{}}
+\global\def\@degree{\mbox{}}
+\global\def\@author{\mbox{}}
+\global\def\@title{\mbox{}}
+\global\def\@gdate{\number\date} % Default date is current date
+%    \end{macrocode}
+% Here |\maketitle| is changed to follow the KU guidelines.  It includes its own
+% disclaimer page.
+%    \begin{macrocode}
+\newcommand{\maketitle}
+{
+\begin{titlepage}
+   \setcounter{page}{1}
+%    \end{macrocode}
+% Set the line spacing to 1 for the title page.
+%    \begin{macrocode}
+   \begin{spacing}{1} 
+   \begin{center}
+      \mbox{}
+      \vfill
+      \textbf{{\@title}}\\
+      \vspace{2em}
+      A thesis written at \\
+      \vspace{1em}
+      \textbf{{\@sponsor}}\\
+      \vspace{1em}
+      and submitted to \\
+      \vspace{1em}
+      \textbf{KETTERING UNIVERSITY} \\
+      \vspace{3em}
+      in partial fulfillment \\
+      of the requirements for the \\
+      degree of \\
+      \vspace{1em}
+      \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@department}} \\
+      \vspace{3em}
+      by \\
+      \vspace{1em}
+      \textbf{\MakeUppercase{{\@author}}}\\
+      \vspace{1em}
+      {\@gdate} \\
+      \vspace{1in}
+   \end{center}
+
+   \begin{flushright}
+
+
+   \begin{tabular}{@{}l}
+   \\ \hline
+   Author    \\
+   \\
+   \\ \hline
+   Employer Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
+   \\
+   \\ \hline   
+   Faculty Advisor \\
+   \end{tabular}
+
+
+   \end{flushright}
+   \end{spacing}
+   \end{titlepage}
+   \setcounter{page}{2}
+   \setcounter{secnumdepth}{-1}
+
+   \chapter{DISCLAIMER}
+   \begin{doublespace}
+   \par
+       This thesis is being submitted as partial and final fulfillment of the
+      cooperative work experience requirements of Kettering University needed
+    to obtain a Bachelor of Science in {\@department}.
+    \par
+    The conclusions and opinions expressed in this thesis are those of the
+    writer and do not necessarily represent the position of Kettering
+    University or my employer, or any of its directors, officers, agents, or
+    employees with respect to the matters discussed.
+    \end{doublespace}
+}%\maketitle
+
+\newcommand*\chaptermark[1]{}
+%    \end{macrocode}
+% Chapters are the only numbered objects, and they use Roman numerals.
+% Roman numerals are set below.
+%    \begin{macrocode}
+\setcounter{secnumdepth}{0}
+\setcounter{secnumdepth}{0}
+\newcounter {part}
+\newcounter {chapter}
+\newcounter {section}[chapter]
+\newcounter {subsection}[section]
+\newcounter {subsubsection}[subsection]
+\newcounter {paragraph}[subsubsection]
+\newcounter {subparagraph}[paragraph]
+\renewcommand \thepart {\@Roman\c@part}
+\renewcommand \thechapter {\@Roman\c@chapter}
+\renewcommand \thesection {\thechapter.\@arabic\c@section}
+\renewcommand\thesubsection   {\thesection.\@arabic\c@subsection}
+\renewcommand\thesubsubsection{\thesubsection .\@arabic\c@subsubsection}
+\renewcommand\theparagraph    {\thesubsubsection.\@arabic\c@paragraph}
+\renewcommand\thesubparagraph {\theparagraph.\@arabic\c@subparagraph}
+\newcommand\@chapapp{\chaptername}
+\newcommand\part{%
+  \if@openright
+    \cleardoublepage
+  \else
+    \clearpage
+  \fi
+  \thispagestyle{plain}%
+  \if@twocolumn
+    \onecolumn
+    \@tempswatrue
+  \else
+    \@tempswafalse
+  \fi
+  \null\vfil
+  \secdef\@part\@spart}
+
+\def\@part[#1]#2{%
+    \ifnum \c@secnumdepth >-2\relax
+      \refstepcounter{part}%
+      \addcontentsline{toc}{part}{\thepart\hspace{1em}#1}%
+    \else
+      \addcontentsline{toc}{part}{#1}%
+    \fi
+    \markboth{}{}%
+    {\centering
+     \interlinepenalty \@M
+     \normalfont
+     \ifnum \c@secnumdepth >-2\relax
+       \huge\bfseries \partname~\thepart
+       \par
+       \vskip 20\p@
+     \fi
+     \Huge \bfseries #2\par}%
+    \@endpart}
+\def\@spart#1{%
+    {\centering
+     \interlinepenalty \@M
+     \normalfont
+     \Huge \bfseries #1\par}%
+    \@endpart}
+\def\@endpart{\vfil\newpage
+              \if@twoside
+                \null
+                \thispagestyle{empty}%
+                \newpage
+              \fi
+              \if@tempswa
+                \twocolumn
+              \fi}
+\newcommand\chapter{\if@openright\cleardoublepage\else\clearpage\fi
+                    \thispagestyle{plain}%
+                    \global\@topnum\z@
+                    \@afterindentfalse
+                    \secdef\@chapter\@schapter}
+%    \end{macrocode}
+% We put a period after the chapter number in the table of contents.
+% (e.g. I.\hspace{.5in}INTRODUCTION)
+%    \begin{macrocode}
+\def\@chapter[#1]#2{\ifnum \c@secnumdepth >\m@ne
+                         \refstepcounter{chapter}%
+                         \typeout{\@chapapp\space\thechapter.}%
+                         \addcontentsline{toc}{chapter}%
+                                   {\protect\numberline{\thechapter\@.}\MakeUppercase{#1}}%
+                    \else
+                      \addcontentsline{toc}{chapter}{\MakeUppercase{#1}}%
+                    \fi
+                    \chaptermark{#1}%
+                    \if@twocolumn
+                      \@topnewpage[\@makechapterhead{#2}]%
+                    \else
+                      \@makechapterhead{#2}%
+                      \@afterheading
+                    \fi}
+%    \end{macrocode}
+% We do simplistic Chapter Headers.  Note that these fix the table of
+% contents as well.
+%    \begin{macrocode}
+\def\@makechapterhead#1{%
+  \vspace*{1in}%
+  {\parindent \z@ \centering \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+        \bfseries \thechapter\@.
+    \fi
+    \bfseries \MakeUppercase#1\par\nobreak
+    \vskip 40\p@
+  }}
+\def\@makeschapterhead#1{%
+  \vspace*{1in}%
+  {\parindent \z@ \centering
+    \normalfont
+    \interlinepenalty\@M
+    \bfseries  \MakeUppercase#1\par\nobreak
+    \vskip 40\p@
+  }}
+\def\@schapter#1{\if@twocolumn
+                   \@topnewpage[\@makeschapterhead{#1}]%
+                 \else
+                   \@makeschapterhead{#1}%
+                   \@afterheading
+                 \fi}
+%    \end{macrocode}
+% The format requires underlined section headers.
+%
+% \textbf{Note:} Even though the thesis formatting permits you to use italics
+% instead of underlining most places, this is one place it does not.
+%    \begin{macrocode}                      
+\newcommand\section{\@startsection{section}{1}{0mm}%
+                                    {3.5ex \@plus 1ex \@minus .2ex}%
+                                    {2.3ex \@plus.2ex}%
+                                    {\raggedright\normalsize\bfseries\underline}}%
+\newcommand\subsection{\@startsection{subsection}{2}{0mm}%
+                                     {3.25ex\@plus 1ex \@minus .2ex}%
+                                     {1.5ex \@plus .2ex}%
+                                     {\normalfont\normalsize\bfseries\underline}}%
+\newcommand\subsubsection{\@startsection{subsubsection}{3}{0mm}%
+                                     {3.25ex\@plus 1ex \@minus .2ex}%
+                                     {1.5ex \@plus .2ex}%
+                                     {\normalfont\normalsize\bfseries\underline}}%
+\newcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+                                    {3.25ex \@plus1ex \@minus.2ex}%
+                                    {-1em}%
+                                    {\normalfont\normalsize\bfseries}}
+\newcommand\subparagraph{\@startsection{subparagraph}{5}{\parindent}%
+                                       {3.25ex \@plus1ex \@minus .2ex}%
+                                       {-1em}%
+                                      {\normalfont\normalsize\bfseries}}
+\if@twocolumn
+  \setlength\leftmargini  {2em}
+\else
+  \setlength\leftmargini  {2.5em}
+\fi
+\leftmargin  \leftmargini
+\setlength\leftmarginii  {2.2em}
+\setlength\leftmarginiii {1.87em}
+\setlength\leftmarginiv  {1.7em}
+\if@twocolumn
+  \setlength\leftmarginv  {.5em}
+  \setlength\leftmarginvi {.5em}
+\else
+  \setlength\leftmarginv  {1em}
+  \setlength\leftmarginvi {1em}
+\fi
+\setlength  \labelsep  {.5em}
+\setlength  \labelwidth{\leftmargini}
+\addtolength\labelwidth{-\labelsep}
+\@beginparpenalty -\@lowpenalty
+\@endparpenalty   -\@lowpenalty
+\@itempenalty     -\@lowpenalty
+\renewcommand\theenumi{\@arabic\c@enumi}
+\renewcommand\theenumii{\@alph\c@enumii}
+\renewcommand\theenumiii{\@roman\c@enumiii}
+\renewcommand\theenumiv{\@Alph\c@enumiv}
+\newcommand\labelenumi{\theenumi.}
+\newcommand\labelenumii{(\theenumii)}
+\newcommand\labelenumiii{\theenumiii.}
+\newcommand\labelenumiv{\theenumiv.}
+\renewcommand\p@enumii{\theenumi}
+\renewcommand\p@enumiii{\theenumi(\theenumii)}
+\renewcommand\p@enumiv{\p@enumiii\theenumiii}
+\newcommand\labelitemi{\textbullet}
+\newcommand\labelitemii{\normalfont\bfseries \textendash}
+\newcommand\labelitemiii{\textasteriskcentered}
+\newcommand\labelitemiv{\textperiodcentered}
+\newenvironment{description}
+               {\singlespacing\begin{list}{}{%
+                \renewcommand{\makelabel}[1]{\normalfont ##1:\hfil}%
+                \setlength{\labelwidth}{1.5 in}%
+                \setlength{\leftmargin}{\labelwidth+\labelsep}}}
+               {\end{list}\doublespacing}
+\newcommand*\descriptionlabel[1]{\hspace\labelsep
+                                 \normalfont #1:\hfil}
+\newenvironment{preface}
+{
+\setcounter{secnumdepth}{-1}
+\chapter{\prefacename}\begin{doublespacing}
+}
+{\end{doublespacing}\setcounter{secnumdepth}{0}}
+\newenvironment{verse}
+               {\let\\\@centercr
+                \list{}{\itemsep      \z@
+                        \itemindent   -1.5em%
+                        \listparindent\itemindent
+                        \rightmargin  \leftmargin
+                        \advance\leftmargin 1.5em}%
+                \item\relax}
+               {\endlist}
+\newenvironment{quotation}
+               {\list{}{\listparindent 1.5em%
+                        \itemindent    \listparindent
+                        \rightmargin   \leftmargin
+                        \parsep        \z@ \@plus\p@}%
+                \item\relax}
+               {\endlist}
+\newenvironment{quote}
+               {\list{}{\rightmargin\leftmargin}%
+                \item\relax}
+               {\endlist}
+\if@compatibility
+\newenvironment{titlepage}
+    {%
+      \if@twocolumn
+        \@restonecoltrue\onecolumn
+      \else
+        \@restonecolfalse\newpage
+      \fi
+      \thispagestyle{empty}%
+      \setcounter{page}\z@
+    }%
+    {\if@restonecol\twocolumn \else \newpage \fi
+    }
+\else
+\newenvironment{titlepage}
+    {%
+      \if@twocolumn
+        \@restonecoltrue\onecolumn
+      \else
+        \@restonecolfalse\newpage
+      \fi
+      \thispagestyle{empty}%
+      \setcounter{page}\@ne
+    }%
+    {\if@restonecol\twocolumn \else \newpage \fi
+     \if@twoside\else
+        \setcounter{page}\@ne
+     \fi
+    }
+\fi
+%    \end{macrocode}
+% The appendix command has many tasks.  Note that right now, if you have only
+% one appendix, you're on your own.   A lot of this was ripped from
+% Peter Wilson's appendix class.  The only reason I ripped it was
+% because his system provides no facility for telling it whether
+% chapter or section starts an appendix for a non-standard class.
+% Since this needs to be fairly easy for fellow students (E.g. no
+% editing other packages if I can help it), I rewrote and inserted it here.
+%    \begin{macrocode}
+\newcommand\appendix{\par
+  \thispagestyle{plain}%
+  \if@twocolumn\onecolumn\@tempswatrue\else\@tempswafalse\fi
+  \markboth{}{}%
+  {\setcounter{secnumdepth}{-1}
+  \chapter{\appendixtocname}
+  \setcounter{secnumdepth}{0}}%
+  \vfil\newpage
+  \if@twoside
+    \if@openright
+      \null
+      \thispagestyle{empty}%
+      \newpage
+    \fi
+  \fi
+  \if@tempswa
+    \twocolumn
+  \fi
+
+  \setcounter{section}{0}
+  \setcounter{chapter}{0}
+  \renewcommand\@chapapp{\appendixname}
+  \renewcommand\thechapter{\@Alph\c@chapter}
+  \let\oldacl@pp=\addcontentsline
+  \def\addcontentsline##1##2##3{%
+    \ifthenelse{\equal{##1}{toc}}{%
+      \ifthenelse{\equal{##2}{chapter}}{%
+        \addtocontents{##1}{\protect\contentsline{##2}%
+                            {\appendixname\space ##3}{\thepage}}}%
+      {\oldacl@pp{##1}{##2}{##3}}}%
+    {\oldacl@pp{##1}{##2}{##3}}}
+%    \end{macrocode}
+% \textbf{Note:} Still in |\appendix|.\\
+% Note we have that darned colon in for appendicies in the TOC.
+% Also note the ugly kludge being used to remove vertical spacing
+% between appendix names.
+%    \begin{macrocode}
+\def\@chapter[##1]##2{\ifnum \c@secnumdepth >\m@ne
+                         \refstepcounter{chapter}%
+                         \typeout{\@chapapp\space\thechapter}%
+                         \addcontentsline{toc}{section}%
+                                   {\@chapapp\space\thechapter: ##1}%
+                    \else
+                      \addcontentsline{toc}{chapter}{##1}%
+                    \fi
+                    \chaptermark{##1}%
+                      \if@twocolumn
+                      \@topnewpage[\@makechapterhead{##2}]%
+                    \else
+                      \@makechapterhead{##2}%                      
+                      \@afterheading
+                    \fi}
+%    \end{macrocode}
+% Now things are redefined a special page just for the chapter
+% heading.
+%    \begin{macrocode}
+\def\@makechapterhead##1{%
+  \vspace*{1in}%
+  {\parindent \z@ \centering \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+        \bfseries \@chapapp\  \thechapter\@\par
+    \fi
+    \vskip 40\p@
+    \bfseries \MakeUppercase##1\par\nobreak
+    \clearpage
+  }}
+}
+\setlength\arraycolsep{5\p@}
+\setlength\tabcolsep{6\p@}
+\setlength\arrayrulewidth{.4\p@}
+\setlength\doublerulesep{2\p@}
+\setlength\tabbingsep{\labelsep}
+\skip\@mpfootins = \skip\footins
+\setlength\fboxsep{3\p@}
+\setlength\fboxrule{.4\p@}
+\@addtoreset {equation}{chapter}
+\renewcommand\theequation
+  {\ifnum \c@chapter>\z@ \thechapter.\fi \@arabic\c@equation}
+%    \end{macrocode}
+% Here we reconfigure lists of figures and tables to appear in table of
+% contents.  Also, parts of report.cls were removed to
+% reconfigure figure counter to number for the entire document rather than per
+% chapter.
+%    \begin{macrocode}
+\newcounter{figure}
+\def\fps@figure{tbp}
+\def\ftype@figure{1}
+\def\ext@figure{lof}
+\def\fnum@figure{\underline{\figurename~\thefigure.}}
+\newenvironment{figure}
+               {\@float{figure}}
+               {\end@float}
+\newenvironment{figure*}
+               {\@dblfloat{figure}}
+               {\end@dblfloat}
+%    \end{macrocode}
+% Reconfigured table counter to number for the entire document, not per
+% chapter.  (Bits of report.cls removed)
+%    \begin{macrocode}               
+\newcounter{table}
+\def\fps@table{tbp}
+\def\ftype@table{2}
+\def\ext@table{lot}
+\def\fnum@table{\underline{\tablename~\thetable.}}
+\newenvironment{table}
+               {\@float{table}}
+               {\end@float}
+\newenvironment{table*}
+               {\@dblfloat{table}}
+               {\end@dblfloat}
+\newlength\abovecaptionskip
+\newlength\belowcaptionskip
+\setlength\abovecaptionskip{10\p@}
+\setlength\belowcaptionskip{0\p@}
+\long\def\@makecaption#1#2{%
+  \vskip\abovecaptionskip
+  \sbox\@tempboxa{#1 #2}%
+  \ifdim \wd\@tempboxa >\hsize
+    #1 #2\par
+  \else
+    \global \@minipagefalse
+    \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+  \fi
+  \vskip\belowcaptionskip}
+\DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
+\DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
+\DeclareOldFontCommand{\tt}{\normalfont\ttfamily}{\mathtt}
+\DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
+\DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
+\DeclareOldFontCommand{\sl}{\normalfont\slshape}{\@nomath\sl}
+\DeclareOldFontCommand{\sc}{\normalfont\scshape}{\@nomath\sc}
+\DeclareRobustCommand*\cal{\@fontswitch\relax\mathcal}
+\DeclareRobustCommand*\mit{\@fontswitch\relax\mathnormal}
+\newcommand\@pnumwidth{1.55em}
+\newcommand\@tocrmarg{2.55em}
+\newcommand\@dotsep{4.5}
+\setcounter{tocdepth}{2}
+\newcommand\tableofcontents{%
+    \if@twocolumn
+      \@restonecoltrue\onecolumn
+    \else
+      \@restonecolfalse
+    \fi
+    \chapter*{\contentsname
+        \@mkboth{%
+           \MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
+    \@starttoc{toc}%
+    \if@restonecol\twocolumn\fi
+    }
+\newcommand*\l@part[2]{%
+  \ifnum \c@tocdepth >-2\relax
+    \addpenalty{-\@highpenalty}%
+    \addvspace{2.25em \@plus\p@}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      {\leavevmode
+       \large \bfseries #1\hfil \hb@xt@\@pnumwidth{\hss #2}}\par
+       \nobreak
+         \global\@nobreaktrue
+         \everypar{\global\@nobreakfalse\everypar{}}%
+    \endgroup
+  \fi}
+%    \end{macrocode}
+% Here we setup table of contents.
+%    \begin{macrocode}
+\newcommand*\l@chapter{\vspace{1em}\@dottedtocline{0}{0em}{4em}}
+\newcommand*\l@section{\@dottedtocline{1}{5.5em}{2.3em}}
+\newcommand*\l@subsection{\@dottedtocline{2}{7.8em}{3.2em}}
+\newcommand*\l@subsubsection{\@dottedtocline{3}{11.0em}{4.1em}}
+\newcommand*\l@paragraph{\@dottedtocline{4}{14em}{5em}}
+\newcommand*\l@subparagraph{\@dottedtocline{5}{16em}{6em}}
+%    \end{macrocode}
+% List of illustrations modified to appear in the table of contents.
+%    \begin{macrocode}
+\newcommand\listofillustrations{%
+    \setcounter{secnumdepth}{-1}    
+    \chapter{\listillusname%
+      \@mkboth{\MakeUppercase\listillusname}%
+              {\MakeUppercase\listillusname}}%
+\begin{doublespace}%
+\begin{raggedright}%
+\textbf{\underline{Figures}\hfill\underline{Page}}%
+\end{raggedright}%
+\@starttoc{lof}%
+\vspace{2em}
+\begin{raggedright}%
+\textbf{\underline{Tables}\hfill\underline{Page}}%
+\end{raggedright}%
+\@starttoc{lot}%
+\end{doublespace}
+\setcounter{secnumdepth}{0}    
+}
+\newcommand*\l@figure{\@dottedtocline{1}{0em}{2.3em}}
+\let\l@table\l@figure
+\newdimen\bibindent
+\setlength\bibindent{1.5em}
+\newenvironment{thebibliography}[1]
+     {\chapter*{\bibname
+        \@mkboth{\MakeUppercase\bibname}{\MakeUppercase\bibname}}%
+      \list{\@biblabel{\@arabic\c@enumiv}}%
+           {\settowidth\labelwidth{\@biblabel{#1}}%
+            \leftmargin\labelwidth
+            \advance\leftmargin\labelsep
+            \@openbib@code
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sloppy
+      \clubpenalty4000
+      \@clubpenalty \clubpenalty
+      \widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+\newcommand\newblock{\hskip .11em\@plus.33em\@minus.07em}
+\let\@openbib@code\@empty
+\newenvironment{theindex}
+               {\if@twocolumn
+                  \@restonecolfalse
+                \else
+                  \@restonecoltrue
+                \fi
+                \columnseprule \z@
+                \columnsep 35\p@
+                \twocolumn[\@makeschapterhead{\indexname}]%
+                \@mkboth{\MakeUppercase\indexname}%
+                        {\MakeUppercase\indexname}%
+                \thispagestyle{plain}\parindent\z@
+                \parskip\z@ \@plus .3\p@\relax
+                \let\item\@idxitem}
+               {\if@restonecol\onecolumn\else\clearpage\fi}
+\newcommand\@idxitem{\par\hangindent 40\p@}
+\newcommand\subitem{\@idxitem \hspace*{20\p@}}
+\newcommand\subsubitem{\@idxitem \hspace*{30\p@}}
+\newcommand\indexspace{\par \vskip 10\p@ \@plus5\p@ \@minus3\p@\relax}
+\renewcommand\footnoterule{%
+  \kern-3\p@
+  \hrule\@width.4\columnwidth
+  \kern2.6\p@}
+\@addtoreset{footnote}{chapter}
+\newcommand\@makefntext[1]{%
+    \parindent 1em%
+    \noindent
+    \hb@xt@1.8em{\hss\@makefnmark}#1}
+%    \end{macrocode}
+% Kettering requires that these be all caps.  While we do have
+% automatic uppercasing in spots, it's best to cover all the bases.
+%    \begin{macrocode}
+\newcommand\contentsname{TABLE OF CONTENTS}
+\newcommand\listillusname{LIST OF ILLUSTRATIONS}
+\newcommand\bibname{REFERENCES}             % APA format!
+\newcommand\indexname{INDEX}
+\newcommand\figurename{Figure}
+\newcommand\tablename{Table}
+\newcommand\partname{PART}
+\newcommand\chaptername{Chapter}
+\newcommand\appendixname{APPENDIX}
+\newcommand\appendixtocname{APPENDICES}
+\newcommand\prefacename{PREFACE}
+\def\today{\ifcase\month\or
+  January\or February\or March\or April\or May\or June\or
+  July\or August\or September\or October\or November\or December\fi
+  \space\number\day, \number\year}
+\setlength\columnsep{10\p@}
+\setlength\columnseprule{0\p@}
+\pagestyle{plain}
+%    \end{macrocode}
+% The thesis begins with Roman page numerals, and continues with Arabic.
+% Some sections in the front are double-spaced.
+%    \begin{macrocode}
+\pagenumbering{roman}
+\newcommand\begincontent{
+\clearpage
+\pagenumbering{arabic}
+\doublespacing
+}
+%    \end{macrocode}
+% Margin Setup
+%    \begin{macrocode}
+\setlength{\oddsidemargin}{.5 in}
+\setlength{\footskip}{.5 in}
+\setlength{\textheight}{9 in}
+\setlength{\textwidth}{6 in}
+\setlength{\topmargin}{0pt}
+\setlength{\headheight}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\voffset}{0pt}
+\setlength{\hoffset}{0pt}
+\setlength{\textheight}{9in}
+
+
+\if@twoside
+\else
+  \raggedbottom
+\fi
+\if@twocolumn
+  \twocolumn
+  \sloppy
+  \flushbottom
+\else
+  \onecolumn
+\fi
+%    \end{macrocode}
+%Rather than stomp on the documentation, I'll simply indicate that it's right
+%below.  Note that I have altered the file somewhat.  If I was less lazy, I'd pull
+%out the unneccesary bits.
+%    \begin{macrocode}
+%
+% Save file as: ENDNOTES.STY
+% modified by --bg (B.Gaulle) 09/14/94 for:
+%               1) replace » (why a 8bit char here?) by ^ as a default. 
+%               2) force \catcode of > to be 12 (implied by \@doanenot).
+%          by --bg again 03/22/95 for:
+%               3) reseting appropriate catcode of > in case it were
+%                  used as an active char before \@endanenote (was
+%                  pointed by Ch. Pallier).
+%%%% free to distribute by John_Lavagnino@Brown.edu on Thu, 23 Mar 1995 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%       ****************************************
+%       *              ENDNOTES                *
+%       ****************************************
+%
+%  Date of this version: 24 September 1991.
+%
+%  Based on the FOOTNOTES section of
+%  LATEX.TEX (VERSION 2.09 - RELEASE OF 19 April 1986), with
+%  "footnote" changed to "endnote" and "fn" changed to "en" (where
+%  appropriate), with all the minipage stuff pulled out, and with
+%  some small changes for the different operation of endnotes.
+%
+%  Uses an extra external file, with .ENT extension, to hold the
+%  text of the endnotes.  This may be deleted after the run; a new
+%  version is generated each time.
+%
+%  This code does not obey \nofiles.  Perhaps it should.
+%
+%   John Lavagnino (lav@brandeis.bitnet), 9/23/88
+%   Department of English and American Literature,
+%      Brandeis University
+%
+%  To turn all the footnotes in your documents into endnotes, say
+%
+%     \let\footnote=\endnote
+%
+%  in your preamble, and then add something like
+%
+%     \newpage
+%     \begingroup
+%     \parindent 0pt
+%     \parskip 2ex
+%     \def\enotesize{\normalsize}
+%     \theendnotes
+%     \endgroup
+%
+% as the last thing in your document.
+%
+%       ****************************************
+%       *            CHANGE LOG                *
+%       ****************************************
+%
+% JL  Modified to include \addtoendnotes.  JL, 10/22/89.
+%
+% JK  Modification by J"org Knappen 25. 2. 1991:
+% JK
+% JK  Introduced \notesname in the spirit of international \LaTeX.
+% JK  \notesname is set per default to be {Notes}, but can easily
+% JK  be redifined, e.g. for german language
+% JK  \renewcommand{\notesname}{Anmerkungen}
+%
+% DW Modification by Dominik Wujastyk, London, 19 September 1991:
+% DW
+% DW Moved the line
+% DW         \edef\@currentlabel{\csname p@endnote\endcsname\@theenmark}
+% DW out of the definition of \@endnotetext and into the definition
+% DW of \@doanenote so that \label and \ref commands work correctly in
+% DW endnotes.  Otherwise, the \label just pointed to the last section
+% DW heading (or whatever) preceding the \theendnotes command.
+%
+% JL Revised documentation and macros.  24 Sept 1991.
+%
+%       ****************************************
+%       *        ENDNOTE COMMANDS              *
+%       ****************************************
+%
+%
+%   \endnote{NOTE}       : User command to insert a endnote.
+%
+%   \endnote[NUM]{NOTE}  : User command to insert a endnote numbered
+%                           NUM, where NUM is a number -- 1, 2,
+%                           etc.  For example, if endnotes are numbered
+%                           *, **, etc. within pages, then  \endnote[2]{...}
+%                           produces endnote '**'.  This command does  not
+%                           step the endnote counter.
+%
+%   \endnotemark[NUM]    : Command to produce just the endnote mark in
+%                           the text, but no endnote.  With no argument,
+%                           it steps the endnote counter before  generating
+%                           the mark.
+%
+%   \endnotetext[NUM]{TEXT} : Command to produce the endnote but no
+%                              mark.  \endnote is equivalent to
+%                              \endnotemark \endnotetext .
+%
+%   \addtoendnotes{TEXT} : Command to add text or commands to current
+%                              endnotes file: for inserting headings,
+%                              pagebreaks, and the like into endnotes
+%                              sections.  TEXT a moving argument:
+%                              \protect required for fragile commands.
+%
+%       ****************************************
+%       *        ENDNOTE USER COMMANDS         *
+%       ****************************************
+%
+%   Endnotes use the following parameters, similar to those relating
+%   to footnotes:
+%
+%   \enotesize   : Size-changing command for endnotes.
+%
+%   \theendnote : In usual LaTeX style, produces the endnote number.
+%
+%   \@theenmark : Holds the current endnote's mark--e.g., \dag or '1' or 'a'.
+%
+%   \@makeenmark : A macro to generate the endnote marker from  \@theenmark
+%                  The default definition is \hbox{$^\@theenmark$}.
+%
+%   \@makeentext{NOTE} :
+%        Must produce the actual endnote, using \@theenmark as the mark
+%        of the endnote and NOTE as the text.  It is called when effectively
+%        inside a \parbox, with \hsize = \columnwidth.  For example, it might
+%        be as simple as
+%               $^{\@theenmark}$ NOTE
+%
+%
+%       ****************************************
+%       *        ENDNOTE PSEUDOCODE            *
+%       ****************************************
+%
+% \endnote{NOTE}  ==
+%  BEGIN
+%    \stepcounter{endnote}
+%    \@theenmark :=G eval (\theendnote)
+%    \@endnotemark
+%    \@endnotetext{NOTE}
+%  END
+%
+% \endnote[NUM]{NOTE} ==
+%  BEGIN
+%    begingroup
+%       counter endnote :=L NUM
+%       \@theenmark :=G eval (\theendnote)
+%    endgroup
+%    \@endnotemark
+%    \@endnotetext{NOTE}
+%  END
+%
+% \@endnotetext{NOTE} ==
+%  BEGIN
+%    write to \@enotes file: "\@doanenote{ENDNOTE MARK}"
+%    begingroup
+%       \next := NOTE
+%       set \newlinechar for \write to \space
+%       write to \@enotes file: \meaning\next
+%               (that is, "macro:->NOTE)
+%    endgroup
+%  END
+%
+% \addtoendnotes{TEXT} ==
+%  BEGIN
+%    open endnotes file if not already open
+%    begingroup
+%       let \protect to \string
+%       set \newlinechar for \write to \space
+%       write TEXT to \@enotes file
+%    endgroup
+%  END
+%
+% \endnotemark      ==
+%  BEGIN \stepcounter{endnote}
+%        \@theenmark :=G eval(\theendnote)
+%        \@endnotemark
+%  END
+%
+% \endnotemark[NUM] ==
+%   BEGIN
+%       begingroup
+%         endnote counter :=L NUM
+%        \@theenmark :=G eval(\theendnote)
+%       endgroup
+%       \@endnotemark
+%   END
+%
+% \@endnotemark ==
+%   BEGIN
+%    \leavevmode
+%    IF hmode THEN \@x@sf := \the\spacefactor FI
+%    \@makeenmark          % put number in main text
+%    IF hmode THEN \spacefactor := \@x@sf FI
+%   END
+%
+% \endnotetext      ==
+%    BEGIN \@theenmark :=G eval (\theendnote)
+%          \@endnotetext
+%    END
+%
+% \endnotetext[NUM] ==
+%    BEGIN begingroup  counter endnote :=L NUM
+%                      \@theenmark :=G eval (\theendnote)
+%          endgroup
+%          \@endnotetext
+%    END
+%
+%       ****************************************
+%       *           ENDNOTE MACROS             *
+%       ****************************************
+%
+
+\@definecounter{endnote}
+\def\theendnote{\arabic{endnote}}
+
+% Default definition
+\def\@makeenmark{\hbox{$^{\@theenmark}$}}
+
+\newdimen\endnotesep
+
+\def\endnote{\@ifnextchar[{\@xendnote}{\stepcounter
+   {endnote}\xdef\@theenmark{\theendnote}\@endnotemark\@endnotetext}}
+
+\def\@xendnote[#1]{\begingroup \c@endnote=#1\relax
+   \xdef\@theenmark{\theendnote}\endgroup
+   \@endnotemark\@endnotetext}
+
+%  Here begins endnote code that's really different from the footnote
+% code of LaTeX.
+
+\let\@doanenote=0
+\let\@endanenote=0
+
+\newwrite\@enotes
+\newif\if@enotesopen \global\@enotesopenfalse
+
+\def\@openenotes{\immediate\openout\@enotes=\jobname.ent\relax
+      \global\@enotesopentrue}
+
+%  The stuff with \next and \meaning is a trick from the TeXbook, 382,
+% there intended for setting verbatim text, but here used to avoid
+% macro expansion when the footnote text is written.  \next will have
+% the entire text of the footnote as one long line, which might well
+% overflow limits on output line length; the business with \newlinechar
+% makes every space become a newline in the \@enotes file, so that all
+% of the lines wind up being quite short.
+
+\long\def\@endnotetext#1{%
+     \if@enotesopen \else \@openenotes \fi
+     \immediate\write\@enotes{\@doanenote{\@theenmark}}%
+     \begingroup
+        \def\next{#1}%
+        \newlinechar='40
+        \immediate\write\@enotes{\meaning\next}%
+     \endgroup
+     \immediate\write\@enotes{\@endanenote}}
+
+% \addtoendnotes works the way the other endnote macros probably should
+% have, requiring the use of \protect for fragile commands.
+
+\long\def\addtoendnotes#1{%
+     \if@enotesopen \else \@openenotes \fi
+     \begingroup
+        \newlinechar='40
+        \let\protect\string
+        \immediate\write\@enotes{#1}%
+     \endgroup}
+
+%  End of unique endnote code
+
+\def\endnotemark{\@ifnextchar[{\@xendnotemark
+    }{\stepcounter{endnote}\xdef\@theenmark{\theendnote}\@endnotemark}}
+
+\def\@xendnotemark[#1]{\begingroup \c@endnote #1\relax
+   \xdef\@theenmark{\theendnote}\endgroup \@endnotemark}
+
+\def\@endnotemark{\leavevmode\ifhmode
+  \edef\@x@sf{\the\spacefactor}\fi \@makeenmark
+   \ifhmode\spacefactor\@x@sf\fi\relax}
+
+\def\endnotetext{\@ifnextchar
+    [{\@xendnotenext}{\xdef\@theenmark{\theendnote}\@endnotetext}}
+
+\def\@xendnotenext[#1]{\begingroup \c@endnote=#1\relax
+   \xdef\@theenmark{\theendnote}\endgroup \@endnotetext}
+
+
+%  \theendnotes actually prints out the endnotes.
+
+% Endnotes auto-renumber at the end of each chapter (or actually, when
+% they're printed...)
+%  \enoteformat is provided so user can specify some special formatting
+% for the endnotes.  It needs to set up the paragraph parameters, start
+% the paragraph, and print the label.  The \leavemode stuff is to make
+% and undo a dummy paragraph, to get around the games \section*
+% plays with paragraph indenting.
+
+\def\notesname{NOTES}% <------ AE
+\def\enoteheading{\chapter*{\notesname
+  \@mkboth{\uppercase{\notesname}}{\uppercase{\notesname}}}%
+     \leavevmode\par\vskip-\baselineskip}
+
+\def\enoteformat{\vspace{\baselineskip}\rightskip\z@ \leftskip\z@ \parindent=1.8em
+     \leavevmode\llap{\hbox{$^{\@theenmark}$}}}
+
+\def\enotesize{\normalsize}
+
+% The definition of \ETC. is needed only for versions of TeX prior
+% to 2.992.  Those versions limited \meaning expansions to 1000
+% characters; in 2.992 and beyond there is no limit.  At Brandeis the
+% BIGLATEX program changed the code in the token_show procedure of
+% TeX to eliminate this problem, but most ``big'' versions of TeX
+% will not solve this problem.
+
+\def\theendnotes{\immediate\closeout\@enotes \global\@enotesopenfalse
+  \begingroup
+    \makeatletter
+% the following is to save catcode of ``>'' and restore it in \@endanenote
+\edef\@tempa{`\string >}%
+\ifnum\catcode\@tempa=11\let\@ResetGT\relax% accepts also that > were active
+  \else\edef\@ResetGT{\noexpand\catcode\@tempa=\the\catcode\@tempa}%
+\fi%
+    \catcode`>=12% char > will be read as char so force it to \catcode 12 --bg\edef\GOfrench{`\string @}% temp def futher correctly defined
+    \def\@doanenote##1##2>{\def\@theenmark{##1}\par\begingroup
+        \@ResetGT%\catcode`>=13
+        \edef\@currentlabel{\csname p@endnote\endcsname\@theenmark} %DW
+        \enoteformat}
+    \def\@endanenote{\par\endgroup}%
+    \def\ETC.{\errmessage{Some long endnotes will be truncated; %
+                            use BIGLATEX to avoid this}%
+          \def\ETC.{\relax}}
+    \clearpage
+    \enoteheading
+    \enotesize
+    \begin{singlespacing}
+    \input{\jobname.ent}%
+    \end{singlespacing}
+  \endgroup
+  \setcounter{endnote}{0}}
+\endinput
+%    \end{macrocode}
+% \iffalse
+%</main>
+% \fi
+
