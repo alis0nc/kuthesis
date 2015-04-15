@@ -19,10 +19,10 @@
 %<*main>
 % \fi
 %
-% \def\fileversion{v0.4} \def\filedate{2000/05/29}
+% \def\fileversion{v0.5} \def\filedate{2015/04/15}
 %
 % \title{{kuthesis.dtx}\thanks{This file has version \fileversion\ last revised \filedate}}
-% \author{Arthur Shipkowski}
+% \author{Arthur Shipkowski and Alison Chan}
 % \maketitle
 %
 %	\begin{abstract}
@@ -49,13 +49,16 @@
 % have lowercase and use addcontentsline to get around any
 % provisions I may make.
 %
-% \paragraph{Thanks.}
-% 	There are three people I wish to thank for help on creating this file.  
+% \paragraph{Arthur's thanks.} There are three people I wish to thank for help on creating this file.  
 % First, Professor Mark Wicks of Kettering University, who answered a good number of my
 % headscratchers.  Second, Professor James McDonald of Kettering University,
-% who encouraged me to use \LaTeX to create my thesis.  Finally, My fiance\'{e}, Stephanie
+% who encouraged me to use \LaTeX\ to create my thesis.  Finally, my fiance\'{e}, Stephanie
 % Rybicki, who was kind enough to give me the kick I needed to get this 
 % file documented.  It is still somewhat of a crawling horror, though.
+% \paragraph{Alison's thanks.} I'd like to thank Mark Wicks for digging up Arthur's work over a 
+% decade after the fact, and Arthur for not thinking it creepy that I contacted him out of the 
+% blue regarding this project, and for permitting me to host it on Github and update it for the 
+% current thesis specifications.
 %
 % \section{Getting Started}
 %
@@ -87,9 +90,9 @@
 % manual, there is more to do than that.  First off, in addition
 % to |\title{}| and |\author{}|, you are to define other things.
 % To start with, you must define your department with 
-% |\department{Computer Engineering}|.  Then, define your sponsor with
-% |\sponsor{MAXIMUM WIDGETS}|.  Finally, define your graduation
-% date with |\gdate{December 3, 1999}|.  This way, when you use
+% |\department{Computer Engineering}|.  Then, define your employer with
+% |\employer{MAXIMUM WIDGETS}|.  Finally, define your graduation
+% year with |\gdate{2015}|.  This way, when you use
 % |\maketitle|, not only will your title page be generated but your
 % disclaimer page will be generated as well.
 %
@@ -225,7 +228,7 @@
 %    \end{macrocode}
 % The following options are what you get if you do not specify any
 % options in the class definition. It is designed to produce a thesis
-% the way the department wants to see it.
+% the way the university wants to see it.
 %    \begin{macrocode}
 \ExecuteOptions{letterpaper,12pt,oneside,onecolumn,final,openany}
 \ProcessOptions
@@ -294,13 +297,13 @@
 %    \end{macrocode}
 % Items required for the title page.
 %    \begin{macrocode}
-\newcommand{\sponsor}[1]{\ifx\empty#1\else\gdef\@sponsor{#1}\fi}
+\newcommand{\employer}[1]{\ifx\empty#1\else\gdef\@employer{#1}\fi}
 \newcommand{\department}[1]{\ifx\empty#1\else\gdef\@department{#1}\fi}
 \renewcommand{\author}[1]{\ifx\empty#1\else\gdef\@author{#1}\fi}
 \renewcommand{\title}[1]{\ifx\empty#1\else\gdef\@title{#1}\fi}
 \newcommand{\gdate}[1]{\ifx\empty#1\else\gdef\@gdate{#1}\fi}
 
-\global\def\@sponsor{\mbox{}}
+\global\def\@employer{\mbox{}}
 \global\def\@degree{\mbox{}}
 \global\def\@author{\mbox{}}
 \global\def\@title{\mbox{}}
@@ -308,6 +311,9 @@
 %    \end{macrocode}
 % Here |\maketitle| is changed to follow the KU guidelines.  It includes its own
 % disclaimer page.
+% There is a separate |\maketitle| command for each type of thesis (co-op, research, 
+% professional practice, and e-ship). Yes, I know this is bloody awful. I'm going to 
+% fix it later.
 %    \begin{macrocode}
 \newcommand{\maketitle}
 {
@@ -320,11 +326,11 @@
    \begin{center}
       \mbox{}
       \vfill
-      \textbf{{\@title}}\\
+      \textbf{\MakeUppercase{\@title}}\\
       \vspace{2em}
-      A thesis written at \\
+      A Thesis written for \\
       \vspace{1em}
-      \textbf{{\@sponsor}}\\
+      \textbf{{\@employer}}\\
       \vspace{1em}
       and submitted to \\
       \vspace{1em}
@@ -349,13 +355,13 @@
 
    \begin{tabular}{@{}l}
    \\ \hline
-   Author    \\
+   Student    \\
    \\
    \\ \hline
-   Employer Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
+   Employer Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
    \\
    \\ \hline   
-   Faculty Advisor \\
+   Faculty Thesis Advisor \\
    \end{tabular}
 
 
@@ -368,16 +374,288 @@
    \chapter{DISCLAIMER}
    \begin{doublespace}
    \par
-       This thesis is being submitted as partial and final fulfillment of the
-      cooperative work experience requirements of Kettering University needed
-    to obtain a Bachelor of Science in {\@department}.
+    This thesis is being submitted as partial fulfillment of the
+    graduation requirements of Kettering University needed
+    to obtain a Bachelor of Science in {\@department} Degree.
     \par
-    The conclusions and opinions expressed in this thesis are those of the
-    writer and do not necessarily represent the position of Kettering
-    University or my employer, or any of its directors, officers, agents, or
-    employees with respect to the matters discussed.
-    \end{doublespace}
+    The conclusions and opinions expressed in this thesis are those 
+    of the student author and do not necessarily represent the position 
+    of Kettering University or anyone else affiliated with this 
+    culminating undergraduate experience.
+   \end{doublespace}
 }%\maketitle
+%    \end{macrocode}
+% Coop thesis.
+%    \begin{macrocode}
+\newcommand{\maketitlecoop}
+{
+\begin{titlepage}
+   \setcounter{page}{1}
+   \begin{spacing}{1} 
+   \begin{center}
+      \mbox{}
+      \vfill
+      \textbf{\MakeUppercase{\@title}}\\
+      \vspace{2em}
+      A Co-op Thesis written for \\
+      \vspace{1em}
+      \textbf{{\@employer}}\\
+      \vspace{1em}
+      and submitted to \\
+      \vspace{1em}
+      \textbf{KETTERING UNIVERSITY} \\
+      \vspace{3em}
+      in partial fulfillment \\
+      of the requirements for the \\
+      degree of \\
+      \vspace{1em}
+      \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@department}} \\
+      \vspace{3em}
+      by \\
+      \vspace{1em}
+      \textbf{\MakeUppercase{{\@author}}}\\
+      \vspace{1em}
+      {\@gdate} \\
+      \vspace{1in}
+   \end{center}
+
+   \begin{flushright}
+
+
+   \begin{tabular}{@{}l}
+   \\ \hline
+   Student    \\
+   \\
+   \\ \hline
+   Employer Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
+   \\
+   \\ \hline   
+   Faculty Thesis Advisor \\
+   \end{tabular}
+
+
+   \end{flushright}
+   \end{spacing}
+   \end{titlepage}
+   \setcounter{page}{2}
+   \setcounter{secnumdepth}{-1}
+
+   \chapter{DISCLAIMER}
+   \begin{doublespace}
+   \par
+    This thesis is being submitted as partial fulfillment of the
+    graduation requirements of Kettering University needed
+    to obtain a Bachelor of Science in {\@department} Degree.
+    \par
+    The conclusions and opinions expressed in this thesis are those 
+    of the student author and do not necessarily represent the position 
+    of Kettering University or anyone else affiliated with this 
+    culminating undergraduate experience.
+   \end{doublespace}
+}%\maketitlecoop
+%    \end{macrocode}
+% Research thesis.
+%    \begin{macrocode}
+\newcommand{\maketitleresearch}
+{
+\begin{titlepage}
+   \setcounter{page}{1}
+   \begin{spacing}{1} 
+   \begin{center}
+      \mbox{}
+      \vfill
+      \textbf{\MakeUppercase{\@title}}\\
+      \vspace{2em}
+      A Research Thesis written for \\
+      \vspace{1em}
+      \textbf{KETTERING UNIVERSITY}\\
+      \vspace{1em}
+      and submitted to \\
+      \vspace{1em}
+      \textbf{KETTERING UNIVERSITY} \\
+      \vspace{3em}
+      in partial fulfillment \\
+      of the requirements for the \\
+      degree of \\
+      \vspace{1em}
+      \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@department}} \\
+      \vspace{3em}
+      by \\
+      \vspace{1em}
+      \textbf{\MakeUppercase{{\@author}}}\\
+      \vspace{1em}
+      {\@gdate} \\
+      \vspace{1in}
+   \end{center}
+
+   \begin{flushright}
+
+
+   \begin{tabular}{@{}l}
+   \\ \hline
+   Student    \\
+   \\
+   \\ \hline
+   Faculty Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
+   \\
+   \\ \hline   
+   Committee Member \\
+   \end{tabular}
+
+
+   \end{flushright}
+   \end{spacing}
+   \end{titlepage}
+   \setcounter{page}{2}
+   \setcounter{secnumdepth}{-1}
+
+   \chapter{DISCLAIMER}
+   \begin{doublespace}
+   \par
+    This thesis is being submitted as partial fulfillment of the
+    graduation requirements of Kettering University needed
+    to obtain a Bachelor of Science in {\@department} Degree.
+    \par
+    The conclusions and opinions expressed in this thesis are those 
+    of the student author and do not necessarily represent the position 
+    of Kettering University or anyone else affiliated with this 
+    culminating undergraduate experience.
+   \end{doublespace}
+}%\maketitleresearch
+%    \end{macrocode}
+% Professional Practice thesis.
+%    \begin{macrocode}
+\newcommand{\maketitlepp}
+{
+\begin{titlepage}
+   \setcounter{page}{1}
+   \begin{spacing}{1} 
+   \begin{center}
+      \mbox{}
+      \vfill
+      \textbf{\MakeUppercase{\@title}}\\
+      \vspace{2em}
+      A Professional Practice Thesis written for \\
+      \vspace{1em}
+      \textbf{{\@employer}}\\
+      \vspace{1em}
+      and submitted to \\
+      \vspace{1em}
+      \textbf{KETTERING UNIVERSITY} \\
+      \vspace{3em}
+      in partial fulfillment \\
+      of the requirements for the \\
+      degree of \\
+      \vspace{1em}
+      \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@department}} \\
+      \vspace{3em}
+      by \\
+      \vspace{1em}
+      \textbf{\MakeUppercase{{\@author}}}\\
+      \vspace{1em}
+      {\@gdate} \\
+      \vspace{1in}
+   \end{center}
+
+   \begin{flushright}
+
+
+   \begin{tabular}{@{}l}
+   \\ \hline
+   Student    \\
+   \\
+   \\ \hline
+   Company Liaison~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
+   \\
+   \\ \hline   
+   Faculty Thesis Advisor \\
+   \end{tabular}
+
+
+   \end{flushright}
+   \end{spacing}
+   \end{titlepage}
+   \setcounter{page}{2}
+   \setcounter{secnumdepth}{-1}
+
+   \chapter{DISCLAIMER}
+   \begin{doublespace}
+   \par
+    This thesis is being submitted as partial fulfillment of the
+    graduation requirements of Kettering University needed
+    to obtain a Bachelor of Science in {\@department} Degree.
+    \par
+    The conclusions and opinions expressed in this thesis are those 
+    of the student author and do not necessarily represent the position 
+    of Kettering University or anyone else affiliated with this 
+    culminating undergraduate experience.
+   \end{doublespace}
+}%\maketitlepp
+%    \end{macrocode}
+% E-ship thesis.
+%    \begin{macrocode}
+\newcommand{\maketitleeship}
+{
+\begin{titlepage}
+   \setcounter{page}{1}
+   \begin{spacing}{1} 
+   \begin{center}
+      \mbox{}
+      \vfill
+      \textbf{\MakeUppercase{\@title}}\\
+      \vspace{2em}
+      An E-Ship Thesis written by \\
+      \vspace{1em}
+      \textbf{\MakeUppercase{\@author}}\\
+      \vspace{1em}
+      and submitted to \\
+      \vspace{1em}
+      \textbf{KETTERING UNIVERSITY} \\
+      \vspace{3em}
+      in partial fulfillment \\
+      of the requirements for the \\
+      degree of \\
+      \vspace{1em}
+      \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@department}} \\
+      \vspace{4em}
+      {\@gdate} \\
+      \vspace{1in}
+   \end{center}
+
+   \begin{flushright}
+
+
+   \begin{tabular}{@{}l}
+   \\ \hline
+   Student    \\
+   \\
+   \\ \hline
+   Faculty Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
+   \\
+   \\ \hline   
+   Committee Member \\
+   \end{tabular}
+
+
+   \end{flushright}
+   \end{spacing}
+   \end{titlepage}
+   \setcounter{page}{2}
+   \setcounter{secnumdepth}{-1}
+
+   \chapter{DISCLAIMER}
+   \begin{doublespace}
+   \par
+    This thesis is being submitted as partial fulfillment of the
+    graduation requirements of Kettering University needed
+    to obtain a Bachelor of Science in {\@department} Degree.
+    \par
+    The conclusions and opinions expressed in this thesis are those 
+    of the student author and do not necessarily represent the position 
+    of Kettering University or anyone else affiliated with this 
+    culminating undergraduate experience.
+   \end{doublespace}
+}%\maketitleeship
 
 \newcommand*\chaptermark[1]{}
 %    \end{macrocode}
