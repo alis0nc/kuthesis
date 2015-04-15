@@ -560,9 +560,9 @@
   \vspace*{1in}%
   {\parindent \z@ \centering \normalfont
     \ifnum \c@secnumdepth >\m@ne
-        \bfseries \thechapter\@.
+        \bfseries \thechapter.\enspace
     \fi
-    \bfseries \MakeUppercase#1\par\nobreak
+    \bfseries\MakeUppercase{#1}\par\nobreak
     \vskip 40\p@
   }}
 \def\@makeschapterhead#1{%
@@ -570,7 +570,7 @@
   {\parindent \z@ \centering
     \normalfont
     \interlinepenalty\@M
-    \bfseries  \MakeUppercase#1\par\nobreak
+    \bfseries\MakeUppercase{#1}\par\nobreak
     \vskip 40\p@
   }}
 \def\@schapter#1{\if@twocolumn
