@@ -13,6 +13,7 @@
 \RequirePackage{helvet}
 \RequirePackage{ifthen}
 \RequirePackage{calc}
+\RequirePackage{etoolbox}
 \newcommand\@ptsize{}
 \newif\if@restonecol
 \newif\if@titlepage
@@ -152,7 +153,7 @@
 \global\def\@author{\mbox{}}
 \global\def\@title{\mbox{}}
 \global\def\@gdate{\number\date} % Default date is current date
-\newcommand{\maketitle}
+\newcommand{\maketitle}[1][coop]
 {
 \begin{titlepage}
    \setcounter{page}{1}
@@ -162,9 +163,26 @@
       \vfill
       \textbf{\MakeUppercase{\@title}}\\
       \vspace{2em}
-      A Thesis written for \\
-      \vspace{1em}
-      \textbf{{\@employer}}\\
+      \ifstrequal{#1}{coop}
+      {A Co-op Thesis written for \\
+       \vspace{1em}
+       \textbf{\@employer} \\}
+      {}
+      \ifstrequal{#1}{research}
+      {A Research Thesis written for \\
+       \vspace{1em}
+       \textbf{KETTERING UNIVERSITY} \\}
+      {}
+      \ifstrequal{#1}{pp}
+      {A Professional Practice Thesis written for \\
+       \vspace{1em}
+       \textbf{\@employer} \\}
+      {}
+      \ifstrequal{#1}{eship}
+      {An E-Ship Thesis written by \\
+       \vspace{1em}
+       \textbf{\MakeUppercase{{\@author}}} \\}
+      {}
       \vspace{1em}
       and submitted to \\
       \vspace{1em}
@@ -176,9 +194,12 @@
       \vspace{1em}
       \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@department}} \\
       \vspace{3em}
-      by \\
-      \vspace{1em}
-      \textbf{\MakeUppercase{{\@author}}}\\
+      \ifstrequal{#1}{eship}
+      {}
+      {by \\
+       \vspace{1em}
+       \textbf{\MakeUppercase{{\@author}}}\\
+      }
       \vspace{1em}
       {\@gdate} \\
       \vspace{1in}
@@ -191,10 +212,16 @@
    Student    \\
    \\
    \\ \hline
-   Employer Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
+   \ifstrequal{#1}{coop}{Employer Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{}
+\ifstrequal{#1}{research}{Faculty Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{}
+\ifstrequal{#1}{pp}{Company Liaison~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{}
+\ifstrequal{#1}{eship}{Faculty Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{} \\
    \\
    \\ \hline
-   Faculty Thesis Advisor \\
+   \ifstrequal{#1}{coop}{Faculty Thesis Advisor}{}
+\ifstrequal{#1}{research}{Committee Member}{}
+\ifstrequal{#1}{pp}{Faculty Thesis Advisor}{}
+\ifstrequal{#1}{eship}{Committee Member}{} \\
    \end{tabular}
 
    \end{flushright}
@@ -216,258 +243,6 @@
     culminating undergraduate experience.
    \end{doublespace}
 }%\maketitle
-\newcommand{\maketitlecoop}
-{
-\begin{titlepage}
-   \setcounter{page}{1}
-   \begin{spacing}{1}
-   \begin{center}
-      \mbox{}
-      \vfill
-      \textbf{\MakeUppercase{\@title}}\\
-      \vspace{2em}
-      A Co-op Thesis written for \\
-      \vspace{1em}
-      \textbf{{\@employer}}\\
-      \vspace{1em}
-      and submitted to \\
-      \vspace{1em}
-      \textbf{KETTERING UNIVERSITY} \\
-      \vspace{3em}
-      in partial fulfillment \\
-      of the requirements for the \\
-      degree of \\
-      \vspace{1em}
-      \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@department}} \\
-      \vspace{3em}
-      by \\
-      \vspace{1em}
-      \textbf{\MakeUppercase{{\@author}}}\\
-      \vspace{1em}
-      {\@gdate} \\
-      \vspace{1in}
-   \end{center}
-
-   \begin{flushright}
-
-   \begin{tabular}{@{}l}
-   \\ \hline
-   Student    \\
-   \\
-   \\ \hline
-   Employer Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
-   \\
-   \\ \hline
-   Faculty Thesis Advisor \\
-   \end{tabular}
-
-   \end{flushright}
-   \end{spacing}
-   \end{titlepage}
-   \setcounter{page}{2}
-   \setcounter{secnumdepth}{-1}
-
-   \chapter{DISCLAIMER}
-   \begin{doublespace}
-   \par
-    This thesis is being submitted as partial fulfillment of the
-    graduation requirements of Kettering University needed
-    to obtain a Bachelor of Science in {\@department} Degree.
-    \par
-    The conclusions and opinions expressed in this thesis are those
-    of the student author and do not necessarily represent the position
-    of Kettering University or anyone else affiliated with this
-    culminating undergraduate experience.
-   \end{doublespace}
-}%\maketitlecoop
-\newcommand{\maketitleresearch}
-{
-\begin{titlepage}
-   \setcounter{page}{1}
-   \begin{spacing}{1}
-   \begin{center}
-      \mbox{}
-      \vfill
-      \textbf{\MakeUppercase{\@title}}\\
-      \vspace{2em}
-      A Research Thesis written for \\
-      \vspace{1em}
-      \textbf{KETTERING UNIVERSITY}\\
-      \vspace{1em}
-      and submitted to \\
-      \vspace{1em}
-      \textbf{KETTERING UNIVERSITY} \\
-      \vspace{3em}
-      in partial fulfillment \\
-      of the requirements for the \\
-      degree of \\
-      \vspace{1em}
-      \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@department}} \\
-      \vspace{3em}
-      by \\
-      \vspace{1em}
-      \textbf{\MakeUppercase{{\@author}}}\\
-      \vspace{1em}
-      {\@gdate} \\
-      \vspace{1in}
-   \end{center}
-
-   \begin{flushright}
-
-   \begin{tabular}{@{}l}
-   \\ \hline
-   Student    \\
-   \\
-   \\ \hline
-   Faculty Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
-   \\
-   \\ \hline
-   Committee Member \\
-   \end{tabular}
-
-   \end{flushright}
-   \end{spacing}
-   \end{titlepage}
-   \setcounter{page}{2}
-   \setcounter{secnumdepth}{-1}
-
-   \chapter{DISCLAIMER}
-   \begin{doublespace}
-   \par
-    This thesis is being submitted as partial fulfillment of the
-    graduation requirements of Kettering University needed
-    to obtain a Bachelor of Science in {\@department} Degree.
-    \par
-    The conclusions and opinions expressed in this thesis are those
-    of the student author and do not necessarily represent the position
-    of Kettering University or anyone else affiliated with this
-    culminating undergraduate experience.
-   \end{doublespace}
-}%\maketitleresearch
-\newcommand{\maketitlepp}
-{
-\begin{titlepage}
-   \setcounter{page}{1}
-   \begin{spacing}{1}
-   \begin{center}
-      \mbox{}
-      \vfill
-      \textbf{\MakeUppercase{\@title}}\\
-      \vspace{2em}
-      A Professional Practice Thesis written for \\
-      \vspace{1em}
-      \textbf{{\@employer}}\\
-      \vspace{1em}
-      and submitted to \\
-      \vspace{1em}
-      \textbf{KETTERING UNIVERSITY} \\
-      \vspace{3em}
-      in partial fulfillment \\
-      of the requirements for the \\
-      degree of \\
-      \vspace{1em}
-      \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@department}} \\
-      \vspace{3em}
-      by \\
-      \vspace{1em}
-      \textbf{\MakeUppercase{{\@author}}}\\
-      \vspace{1em}
-      {\@gdate} \\
-      \vspace{1in}
-   \end{center}
-
-   \begin{flushright}
-
-   \begin{tabular}{@{}l}
-   \\ \hline
-   Student    \\
-   \\
-   \\ \hline
-   Company Liaison~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
-   \\
-   \\ \hline
-   Faculty Thesis Advisor \\
-   \end{tabular}
-
-   \end{flushright}
-   \end{spacing}
-   \end{titlepage}
-   \setcounter{page}{2}
-   \setcounter{secnumdepth}{-1}
-
-   \chapter{DISCLAIMER}
-   \begin{doublespace}
-   \par
-    This thesis is being submitted as partial fulfillment of the
-    graduation requirements of Kettering University needed
-    to obtain a Bachelor of Science in {\@department} Degree.
-    \par
-    The conclusions and opinions expressed in this thesis are those
-    of the student author and do not necessarily represent the position
-    of Kettering University or anyone else affiliated with this
-    culminating undergraduate experience.
-   \end{doublespace}
-}%\maketitlepp
-\newcommand{\maketitleeship}
-{
-\begin{titlepage}
-   \setcounter{page}{1}
-   \begin{spacing}{1}
-   \begin{center}
-      \mbox{}
-      \vfill
-      \textbf{\MakeUppercase{\@title}}\\
-      \vspace{2em}
-      An E-Ship Thesis written by \\
-      \vspace{1em}
-      \textbf{\MakeUppercase{\@author}}\\
-      \vspace{1em}
-      and submitted to \\
-      \vspace{1em}
-      \textbf{KETTERING UNIVERSITY} \\
-      \vspace{3em}
-      in partial fulfillment \\
-      of the requirements for the \\
-      degree of \\
-      \vspace{1em}
-      \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@department}} \\
-      \vspace{4em}
-      {\@gdate} \\
-      \vspace{1in}
-   \end{center}
-
-   \begin{flushright}
-
-   \begin{tabular}{@{}l}
-   \\ \hline
-   Student    \\
-   \\
-   \\ \hline
-   Faculty Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  \\
-   \\
-   \\ \hline
-   Committee Member \\
-   \end{tabular}
-
-   \end{flushright}
-   \end{spacing}
-   \end{titlepage}
-   \setcounter{page}{2}
-   \setcounter{secnumdepth}{-1}
-
-   \chapter{DISCLAIMER}
-   \begin{doublespace}
-   \par
-    This thesis is being submitted as partial fulfillment of the
-    graduation requirements of Kettering University needed
-    to obtain a Bachelor of Science in {\@department} Degree.
-    \par
-    The conclusions and opinions expressed in this thesis are those
-    of the student author and do not necessarily represent the position
-    of Kettering University or anyone else affiliated with this
-    culminating undergraduate experience.
-   \end{doublespace}
-}%\maketitleeship
 
 \newcommand*\chaptermark[1]{}
 \setcounter{secnumdepth}{0}
