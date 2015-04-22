@@ -300,6 +300,7 @@
 %    \begin{macrocode}
 \newcommand{\employer}[1]{\ifx\empty#1\else\gdef\@employer{#1}\fi}
 \newcommand{\department}[1]{\ifx\empty#1\else\gdef\@department{#1}\fi}
+\newcommand{\departmentdual}[1]{\ifx\empty#1\else\gdef\@departmentdual{#1}\fi}
 \renewcommand{\author}[1]{\ifx\empty#1\else\gdef\@author{#1}\fi}
 \renewcommand{\title}[1]{\ifx\empty#1\else\gdef\@title{#1}\fi}
 \newcommand{\gdate}[1]{\ifx\empty#1\else\gdef\@gdate{#1}\fi}
@@ -354,9 +355,15 @@
       \vspace{3em}
       in partial fulfillment \\
       of the requirements for the \\
-      degree of \\
+      degree\ifx\@departmentdual\undefined\else{s}\fi{} of \\
       \vspace{1em}
       \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@department}} \\
+      \ifx\@departmentdual\undefined\else
+      \vspace{1em}
+      and \\
+      \vspace{1em}
+      \textbf{BACHELOR OF SCIENCE IN \MakeUppercase{\@departmentdual}} \\
+      \fi
       \vspace{3em}
       \ifstrequal{#1}{eship}
       {}
@@ -401,7 +408,13 @@
    \par
     This thesis is being submitted as partial fulfillment of the
     graduation requirements of Kettering University needed
-    to obtain a Bachelor of Science in {\@department} Degree.
+    to obtain 
+    \ifx\@departmentdual\undefined
+      a Bachelor of Science in {\@department} degree.
+    \else
+      Bachelor of Science in {\@department} and 
+      Bachelor of Science in {\@departmentdual} degrees.
+    \fi
     \par
     The conclusions and opinions expressed in this thesis are those 
     of the student author and do not necessarily represent the position 
