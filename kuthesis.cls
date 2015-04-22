@@ -160,7 +160,6 @@
    \begin{spacing}{1}
    \begin{center}
       \mbox{}
-      \vfill
       \textbf{\MakeUppercase{\@title}}\\
       \vspace{2em}
       \ifstrequal{#1}{coop}
@@ -202,7 +201,7 @@
       }
       \vspace{1em}
       {\@gdate} \\
-      \vspace{1in}
+      \vfill
    \end{center}
 
    \begin{flushright}
