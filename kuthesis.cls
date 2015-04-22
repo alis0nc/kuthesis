@@ -331,7 +331,6 @@
                       \@afterheading
                     \fi}
 \def\@makechapterhead#1{%
-  \vspace*{1in}%
   {\parindent \z@ \centering \normalfont
     \ifnum \c@secnumdepth >\m@ne
         \bfseries \thechapter.\enspace
@@ -340,7 +339,6 @@
     \vskip 40\p@
   }}
 \def\@makeschapterhead#1{%
-  \vspace*{1in}%
   {\parindent \z@ \centering
     \normalfont
     \interlinepenalty\@M
