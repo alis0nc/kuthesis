@@ -7,7 +7,7 @@
 %% kuthesis.dtx  (with options: `main')
 %% 
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
-\ProvidesClass{kuthesis}[2000/05/29 Kettering University Thesis class definition]
+\ProvidesClass{kuthesis}[2015/04/15 Kettering University Thesis class definition]
 \RequirePackage{setspace}
 \RequirePackage{times}
 \RequirePackage{helvet}
