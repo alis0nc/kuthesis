@@ -312,9 +312,8 @@
 %    \end{macrocode}
 % Here |\maketitle| is changed to follow the KU guidelines.  It includes its own
 % disclaimer page.
-% There is a separate |\maketitle| command for each type of thesis (co-op, research, 
-% professional practice, and e-ship). Yes, I know this is bloody awful. I'm going to 
-% fix it later.
+% The |\maketitle| command takes one argument to specify what type of title page 
+% to generate. 
 %    \begin{macrocode}
 \newcommand{\maketitle}[1][coop]
 {
