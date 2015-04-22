@@ -212,15 +212,15 @@
    Student    \\
    \\
    \\ \hline
-   \ifstrequal{#1}{coop}{Employer Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{}
-\ifstrequal{#1}{research}{Faculty Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{}
-\ifstrequal{#1}{pp}{Company Liaison~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{}
+   \ifstrequal{#1}{coop}{Employer Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{}%
+\ifstrequal{#1}{research}{Faculty Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{}%
+\ifstrequal{#1}{pp}{Company Liaison~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{}%
 \ifstrequal{#1}{eship}{Faculty Thesis Advisor~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{} \\
    \\
    \\ \hline
-   \ifstrequal{#1}{coop}{Faculty Thesis Advisor}{}
-\ifstrequal{#1}{research}{Committee Member}{}
-\ifstrequal{#1}{pp}{Faculty Thesis Advisor}{}
+   \ifstrequal{#1}{coop}{Faculty Thesis Advisor}{}%
+\ifstrequal{#1}{research}{Committee Member}{}%
+\ifstrequal{#1}{pp}{Faculty Thesis Advisor}{}%
 \ifstrequal{#1}{eship}{Committee Member}{} \\
    \end{tabular}
 
