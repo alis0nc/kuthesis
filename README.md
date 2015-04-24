@@ -1,7 +1,9 @@
-KU Thesis - LaTeX
+kuthesis
 ========
 
-LaTeX classes for the four different kinds of Kettering University theses.
+#KU Thesis - LaTeX
+
+LaTeX class for the four different kinds of Kettering University theses.
 
 * CUE 495-C (Co-op Thesis)
 * CUE 495-E (Entrepreneurial Thesis)
@@ -12,7 +14,7 @@ Most of the ground work for this project was done by [Arthur Shipkowski](http://
 
 # What is LaTeX?
 
-According to [the Internet](latex-project.org):
+According to [the Internet](http://latex-project.org):
 
 > LaTeX is a document preparation system for high-quality typesetting. It is most often used for medium-to-large technical or scientific documents but it can be used for almost any form of publishing.
 
