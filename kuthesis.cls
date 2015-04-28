@@ -723,10 +723,9 @@
 \setlength\columnsep{10\p@}
 \setlength\columnseprule{0\p@}
 \pagestyle{plain}
-\pagenumbering{roman}
+\pagenumbering{arabic}
 \newcommand\begincontent{
 \clearpage
-\pagenumbering{arabic}
 \doublespacing
 }
 \setlength{\oddsidemargin}{.5 in}
