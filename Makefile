@@ -8,3 +8,7 @@ docs: kuthesis.dtx
 
 example: example.tex
 	pdflatex example.tex
+	bibtex example.aux
+	pdflatex example.tex
+	pdflatex example.tex
+	
